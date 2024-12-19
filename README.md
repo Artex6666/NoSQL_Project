@@ -1,11 +1,11 @@
-#Projet de réplication simple de spotify 
-##Auteurs: 
+# Projet de réplication simple de spotify 
+## Auteurs: 
 
 - RAMEAU Loris
 - ZARIC Slavko
 
 
-##Technologie utilisée :
+## Technologie utilisée :
 
     - MongoDB
     - node.js
