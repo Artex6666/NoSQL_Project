@@ -9,7 +9,7 @@ const authRoutes = require("./routes/auth");
 const userRoutes = require("./routes/user");
 const playlistRoutes = require("./routes/playlist");
 const searchRoutes = require("./routes/search");
-const recommendationRoutes = require("./routes/popularMusic");
+const popularMusic = require("./routes/popularMusic");
 //-----------------------------------------------------------------//
 
 
@@ -35,7 +35,7 @@ app.use("/api/auth", authRoutes);
 app.use("/api/user", userRoutes);
 app.use("/api/playlist", playlistRoutes);
 app.use("/api/search", searchRoutes);
-app.use("/api/popularMusic", recommendationRoutes);
+app.use("/api/popularMusic", popularMusic);
 ///////////////////////////////////////////////////////
 
 
