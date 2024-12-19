@@ -5,7 +5,7 @@ const router = express.Router();
 router.get("/", async (req, res) => {
     try {
         const top10 = await Music.find()  
-            .sort({ popularity:+1}) 
+            .sort({ popularity:-1}) 
             .limit(10) 
             .select('artist title duration popularity year genre'); 
 

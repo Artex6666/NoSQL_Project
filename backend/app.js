@@ -5,8 +5,10 @@ const cors = require("cors");
 const bodyParser = require("body-parser");
 const fs = require("fs");
 const csvParser = require("csv-parser");
+var colors = require("colors")
 
 // --- Import des routes --- //
+const authMiddleware = require("./middleware/authMiddleware")
 const authRoutes = require("./routes/auth");
 const userRoutes = require("./routes/user");
 const playlistRoutes = require("./routes/playlist");
@@ -24,7 +26,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 mongoose
   .connect(process.env.MONGODB_URI)
-  .then(() => console.log("MongoDB Connected"))
+  .then(() => console.log("MongoDB Connected".green))
   .catch((err) => console.error("MongoDB Connection Error:", err));
 
 const Music = require("./models/music");
@@ -33,7 +35,7 @@ const importCsvData = async () => {
     try {
       const count = await Music.countDocuments();
       if (count > 0) {
-        console.log("Data already imported to MongoDB. Skipping CSV import.");
+        console.log("Data already imported to MongoDB. Skipping CSV import.".yellow);
         return;
       }
   
@@ -55,22 +57,24 @@ const importCsvData = async () => {
         .on("end", async () => {
           try {
             await Music.insertMany(results);
-            console.log(`${results.length} songs were successfully added to the database.`);
+            console.log(`${results.length} songs were successfully added to the database.`.orange);
           } catch (err) {
             console.error("Error inserting data into MongoDB:", err);
           }
         })
         .on("error", (err) => {
-          console.error("Error reading the CSV file:", err);
+          console.error("Error reading the CSV file:".red, err);
         });
     } catch (err) {
-      console.error("Error during CSV import:", err);
+      console.error("Error during CSV import:".red, err);
     }
   };
 
 importCsvData();
 
 //////////////////////////////////////////////////////
+app.use(authMiddleware);
+
 app.use("/api/auth", authRoutes);
 app.use("/api/user", userRoutes);
 app.use("/api/playlist", playlistRoutes);
@@ -84,5 +88,5 @@ app.use((req, res) => {
 
 // Démarrage du serveur
 app.listen(PORT, () => {
-  console.log(`Server running on http://localhost:${PORT}`);
+  console.log(`Server running on http://localhost:${PORT}`.green);
 });
