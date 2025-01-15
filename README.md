@@ -1,5 +1,6 @@
-# Projet de réplication simple de spotify 
-## Auteurs: 
+# Projet de réplication simple de spotify
+
+## Auteurs:
 
 - RAMEAU Loris
 - ZARIC Slavko
@@ -18,9 +19,11 @@
     - vue.js
     - swagger
     - colors
+    - dotenv
 
 ### Installation avec commandes suivantes:
+
 `npm install swagger-ui-express swagger-jsdoc`
 `npm install express cookie-parser`
 `npm install mongoose`
-`npm install colors`
+`npm install colors dotenv`
