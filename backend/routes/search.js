@@ -1,41 +1,62 @@
+// routes/search.js
 const express = require("express");
-const Music = require("../models/music");
-const User = require("../models/user"); 
 const router = express.Router();
+const searchController = require("../controllers/searchController");
 
-router.get("/", async (req, res) => {
-    const { query, userId } = req.query;  
+/**
+ * @swagger
+ * tags:
+ *   name: Search
+ *   description: Recherche de musiques
+ */
 
-    if (!query) {
-        return res.status(400).json({ message: "Query is required" });
-    }
-
-    try {
-        const results = await Music.find({
-            $or: [
-                { title: { $regex: query, $options: "i" } },   // i = insensible à la casse
-                { artist: { $regex: query, $options: "i" } }    // i = insensible à la casse
-            ]
-        }).select('artist title duration popularity genre');
-
-        let favorites = [];
-        if (userId) {
-            const user = await User.findById(userId).populate("likedMusics", "title artist");
-            favorites = user.likedMusics; 
-        }
-
-        const resultsWithFavorites = results.map((song) => {
-            const isFavorite = favorites.some(fav => fav._id.toString() === song._id.toString()); 
-            return {
-                ...song.toObject(),
-                isFavorite,  
-            };
-        });
-
-        res.status(200).json(resultsWithFavorites); 
-    } catch (err) {
-        res.status(500).json({ error: "Error while searching in the database", details: err.message });
-    }
-});
+/**
+ * @swagger
+ * /api/search:
+ *   get:
+ *     summary: Recherche de musiques par titre ou artiste
+ *     tags: [Search]
+ *     parameters:
+ *       - in: query
+ *         name: query
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: Terme de recherche (titre ou artiste)
+ *       - in: query
+ *         name: userId
+ *         required: false
+ *         schema:
+ *           type: string
+ *         description: ID de l'utilisateur pour identifier les musiques likées
+ *     responses:
+ *       200:
+ *         description: Renvoie un tableau de musiques correspondant à la recherche
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 type: object
+ *                 properties:
+ *                   artist:
+ *                     type: string
+ *                   title:
+ *                     type: string
+ *                   duration:
+ *                     type: number
+ *                   popularity:
+ *                     type: number
+ *                   genre:
+ *                     type: string
+ *                   isFavorite:
+ *                     type: boolean
+ *                     description: Indique si la musique est dans les favoris de l'utilisateur
+ *       400:
+ *         description: Le paramètre 'query' est manquant
+ *       500:
+ *         description: Erreur lors de la recherche en base de données
+ */
+router.get("/", searchController.searchMusic);
 
 module.exports = router;

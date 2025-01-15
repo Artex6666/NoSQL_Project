@@ -1,52 +1,88 @@
+// routes/playlist.js
 const express = require("express");
-const Playlist = require("../models/playlist");
-const User = require("../models/user");
+const playlistController = require("../controllers/playlistController");
+
 const router = express.Router();
 
-router.post("/:userId/addToPlaylist", async (req, res) => {
-  const { userId } = req.params;
-  const { songId, playlistId } = req.body;  
-  
-  try {
-    const user = await User.findById(userId);
-    if (!user) {
-      return res.status(404).json({ message: "User not found" });
-    }
+/**
+ * @swagger
+ * tags:
+ *   name: Playlist
+ *   description: Gestion des playlists (ajout / suppression de chansons)
+ */
 
-    const playlist = await Playlist.findById(playlistId);
-    if (!playlist) {
-      return res.status(404).json({ message: "Playlist not found" });
-    }
+/**
+ * @swagger
+ * /api/playlist/{userId}/addToPlaylist:
+ *   post:
+ *     summary: Ajoute une chanson à la playlist
+ *     description: Ajoute une chanson identifiée par songId à la playlist spécifiée par playlistId pour l'utilisateur userId
+ *     tags: [Playlist]
+ *     parameters:
+ *       - in: path
+ *         name: userId
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: ID de l'utilisateur
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               songId:
+ *                 type: string
+ *                 description: ID de la chanson à ajouter
+ *               playlistId:
+ *                 type: string
+ *                 description: ID de la playlist
+ *     responses:
+ *       200:
+ *         description: Chanson ajoutée avec succès à la playlist
+ *       400:
+ *         description: Erreur de validation ou autre problème
+ *       404:
+ *         description: Utilisateur ou playlist introuvable
+ */
+router.post("/:userId/addToPlaylist", playlistController.addToPlaylist);
 
-    playlist.songs.push(songId);
-    await playlist.save();
-    res.status(200).json({ message: "Song added to playlist", playlist });
-  } catch (err) {
-    res.status(400).json({ message: err.message });
-  }
-});
-
-router.delete("/:userId/removeFromPlaylist", async (req, res) => {
-  const { userId } = req.params;
-  const { songId, playlistId } = req.body;
-
-  try {
-    const user = await User.findById(userId);
-    if (!user) {
-      return res.status(404).json({ message: "User not found" });
-    }
-
-    const playlist = await Playlist.findById(playlistId);
-    if (!playlist) {
-      return res.status(404).json({ message: "Playlist not found" });
-    }
-
-    playlist.songs = playlist.songs.filter((song) => song.toString() !== songId);
-    await playlist.save();
-    res.status(200).json({ message: "Song removed from playlist", playlist });
-  } catch (err) {
-    res.status(400).json({ message: err.message });
-  }
-});
+/**
+ * @swagger
+ * /api/playlist/{userId}/removeFromPlaylist:
+ *   delete:
+ *     summary: Supprime une chanson de la playlist
+ *     description: Supprime la chanson identifiée par songId de la playlist spécifiée par playlistId pour l'utilisateur userId
+ *     tags: [Playlist]
+ *     parameters:
+ *       - in: path
+ *         name: userId
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: ID de l'utilisateur
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               songId:
+ *                 type: string
+ *                 description: ID de la chanson à retirer
+ *               playlistId:
+ *                 type: string
+ *                 description: ID de la playlist
+ *     responses:
+ *       200:
+ *         description: Chanson supprimée avec succès de la playlist
+ *       400:
+ *         description: Erreur de validation ou autre problème
+ *       404:
+ *         description: Utilisateur ou playlist introuvable
+ */
+router.delete("/:userId/removeFromPlaylist", playlistController.removeFromPlaylist);
 
 module.exports = router;

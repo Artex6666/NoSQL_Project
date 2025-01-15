@@ -1,13 +1,7 @@
 const jwt = require("jsonwebtoken");
 
 const authMiddleware = (req, res, next) => {
-  const publicRoutes = ["/api/auth/login", "/api/auth/register", "/api/search"];
-
-  if (publicRoutes.includes(req.path)) {
-    return next(); 
-  }
-
-  const token = req.header("Authorization")?.replace("Bearer ", "");
+  const { token } = req.cookies; 
 
   if (!token) {
     return res.status(401).json({ message: "Access Denied: No Token Provided" });
@@ -16,10 +10,10 @@ const authMiddleware = (req, res, next) => {
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
     req.user = decoded; 
-    next(); 
+    next();
   } catch (error) {
     res.status(400).json({ message: "Invalid or expired token" });
   }
 };
 
-module.exports = authMiddleware
+module.exports = authMiddleware;

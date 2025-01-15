@@ -1,62 +1,153 @@
+// routes/user.js
 const express = require("express");
-const User = require("../models/user");
+const userController = require("../controllers/userController");
 const router = express.Router();
 
-router.post("/register", async (req, res) => {
-  const { username, email, password } = req.body;
+/**
+ * @swagger
+ * tags:
+ *   name: User
+ *   description: Gestion des favoris et des playlists
+ */
 
-  try {
-    const newUser = new User({
-      username,
-      email,
-      password,
-    });
+/**
+ * @swagger
+ * /api/user/{userId}/addToFavorites:
+ *   post:
+ *     summary: Ajoute une chanson aux favoris de l'utilisateur
+ *     tags: [User]
+ *     parameters:
+ *       - in: path
+ *         name: userId
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: ID de l'utilisateur
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               songId:
+ *                 type: string
+ *             required:
+ *               - songId
+ *     responses:
+ *       200:
+ *         description: Chanson ajoutée aux favoris
+ *       400:
+ *         description: Erreur lors de l'ajout
+ *       404:
+ *         description: Utilisateur introuvable
+ */
+router.post("/:userId/addToFavorites", userController.addToFavorites);
 
-    await newUser.save();
-    res.status(201).json({ message: "Nouvel utilisateur crée!" });
-  } catch (err) {
-    res.status(400).json({ message: err.message });
-  }
-});
+/**
+ * @swagger
+ * /api/user/{userId}/removeFromFavorites:
+ *   delete:
+ *     summary: Supprime une chanson des favoris de l'utilisateur
+ *     tags: [User]
+ *     parameters:
+ *       - in: path
+ *         name: userId
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: ID de l'utilisateur
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               songId:
+ *                 type: string
+ *             required:
+ *               - songId
+ *     responses:
+ *       200:
+ *         description: Chanson supprimée des favoris
+ *       400:
+ *         description: Erreur lors de la suppression
+ *       404:
+ *         description: Utilisateur introuvable
+ */
+router.delete("/:userId/removeFromFavorites", userController.removeFromFavorites);
 
-router.post("/:userId/addToFavorites", async (req, res) => {
-  const { userId } = req.params;
-  const { songId } = req.body;  
+/**
+ * @swagger
+ * /api/user/{userId}/createPlaylist:
+ *   post:
+ *     summary: Crée une nouvelle playlist pour l'utilisateur
+ *     tags: [User]
+ *     parameters:
+ *       - in: path
+ *         name: userId
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: ID de l'utilisateur
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               name:
+ *                 type: string
+ *                 description: Nom de la playlist
+ *             required:
+ *               - name
+ *     responses:
+ *       201:
+ *         description: Playlist créée avec succès
+ *       400:
+ *         description: Erreur lors de la création
+ *       404:
+ *         description: Utilisateur introuvable
+ */
+router.post("/:userId/createPlaylist", userController.createPlaylist);
 
-  try {
-    const user = await User.findById(userId);
-    if (!user) {
-      return res.status(404).json({ message: "User not found" });
-    }
-
-    if (user.favorites.includes(songId)) {
-      return res.status(400).json({ message: "Song already in favorites" });
-    }
-
-    user.favorites.push(songId);
-    await user.save();
-    res.status(200).json({ message: "Song added to favorites", user });
-  } catch (err) {
-    res.status(400).json({ message: err.message });
-  }
-});
-
-router.delete("/:userId/removeFromFavorites", async (req, res) => {
-  const { userId } = req.params;
-  const { songId } = req.body;
-
-  try {
-    const user = await User.findById(userId);
-    if (!user) {
-      return res.status(404).json({ message: "User not found" });
-    }
-
-    user.favorites = user.favorites.filter((song) => song.toString() !== songId);
-    await user.save();
-    res.status(200).json({ message: "Song removed from favorites", user });
-  } catch (err) {
-    res.status(400).json({ message: err.message });
-  }
-});
+/**
+ * @swagger
+ * /api/user/{userId}/deletePlaylist:
+ *   delete:
+ *     summary: Supprime une playlist de l'utilisateur
+ *     tags: [User]
+ *     parameters:
+ *       - in: path
+ *         name: userId
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: ID de l'utilisateur
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               playlistId:
+ *                 type: string
+ *                 description: ID de la playlist
+ *             required:
+ *               - playlistId
+ *     responses:
+ *       200:
+ *         description: Playlist supprimée avec succès
+ *       400:
+ *         description: Erreur lors de la suppression
+ *       403:
+ *         description: L'utilisateur n'est pas autorisé à supprimer cette playlist
+ *       404:
+ *         description: Utilisateur ou playlist introuvable
+ */
+router.delete("/:userId/deletePlaylist", userController.deletePlaylist);
 
 module.exports = router;

@@ -1,18 +1,46 @@
+// routes/popularMusic.js
 const express = require("express");
-const Music = require("../models/music");
+const popularMusicController = require("../controllers/popularMusicController");
 const router = express.Router();
 
-router.get("/", async (req, res) => {
-    try {
-        const top10 = await Music.find()  
-            .sort({ popularity:-1}) 
-            .limit(10) 
-            .select('artist title duration popularity year genre'); 
+/**
+ * @swagger
+ * tags:
+ *   name: PopularMusic
+ *   description: Routes pour la musique populaire (top 10, etc.)
+ */
 
-        res.status(200).json(top10); 
-    } catch (err) {
-        res.status(500).json({ error: "Error 500 ", details: err.message });
-    }
-});
+/**
+ * @swagger
+ * /api/popularMusic:
+ *   get:
+ *     summary: Récupère les 10 musiques les plus populaires
+ *     tags: [PopularMusic]
+ *     responses:
+ *       200:
+ *         description: Tableau des 10 musiques les plus populaires
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 type: object
+ *                 properties:
+ *                   artist:
+ *                     type: string
+ *                   title:
+ *                     type: string
+ *                   duration:
+ *                     type: number
+ *                   popularity:
+ *                     type: number
+ *                   year:
+ *                     type: number
+ *                   genre:
+ *                     type: string
+ *       500:
+ *         description: Erreur interne du serveur
+ */
+router.get("/", popularMusicController.getTop10PopularMusic);
 
 module.exports = router;
