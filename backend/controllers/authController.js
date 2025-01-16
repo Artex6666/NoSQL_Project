@@ -1,14 +1,18 @@
 const jwt = require("jsonwebtoken");
 const User = require("../models/user");
 
+console.log(req.path);
+
 const registerUser = async (req, res) => {
   const { username, email, password } = req.body;
 
   if (!username || !email || !password) {
-    return res.status(400).json({ message: "All fields (username, email, password) are required" });
+    return res
+      .status(400)
+      .json({ message: "All fields (username, email, password) are required" });
   }
 
-  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/; 
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   if (!emailRegex.test(email)) {
     return res.status(400).json({ message: "Invalid email format" });
   }
@@ -22,7 +26,7 @@ const registerUser = async (req, res) => {
     const newUser = new User({
       username,
       email,
-      password, 
+      password,
     });
 
     await newUser.save();
@@ -44,13 +48,12 @@ const loginUser = async (req, res) => {
       expiresIn: "1h",
     });
 
-
     res
       .cookie("token", token, {
-        httpOnly: true,     // Empêche l'accès au cookie par du JS côté client
-        secure: false,      // À mettre sur true en HTTPS
+        httpOnly: true, // Empêche l'accès au cookie par du JS côté client
+        secure: false, // À mettre sur true en HTTPS
         sameSite: "strict", // Empêche le cookie d'être envoyé par d'autres domaines
-        maxAge: 3600000,    // 1 heure en millisecondes
+        maxAge: 3600000, // 1 heure en millisecondes
       })
       .status(200)
       .json({ message: "User logged in successfully" });
@@ -60,7 +63,10 @@ const loginUser = async (req, res) => {
 };
 
 const logoutUser = (req, res) => {
-  res.clearCookie("token").status(200).json({ message: "User logged out successfully" });
+  res
+    .clearCookie("token")
+    .status(200)
+    .json({ message: "User logged out successfully" });
 };
 
 module.exports = { registerUser, loginUser, logoutUser };

@@ -1,6 +1,6 @@
 <template>
   <footer class="footer">
-    <p>&copy; 2025 Mon Application</p>
+    <p>&copy; 2025 Spotify like Loris RAMEAU, Slavko ZARIC</p>
   </footer>
 </template>
 
