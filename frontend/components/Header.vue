@@ -25,7 +25,7 @@ export default {
   data() {
     return {
       searchQuery: "",
-      isLoggedIn: false, // Example: Replace with actual logic for authentication
+      isLoggedIn: false,
     };
   },
   methods: {
@@ -36,7 +36,6 @@ export default {
       this.$router.push("/login");
     },
     logout() {
-      // Implement your logout logic here
       this.isLoggedIn = false;
     },
   },
@@ -48,7 +47,7 @@ export default {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background-color: #1db954; /* Spotify green */
+  background-color: #1db954;
   color: white;
   padding: 10px 20px;
   position: sticky;

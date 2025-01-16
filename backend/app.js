@@ -105,7 +105,7 @@ app.use("/api/auth", authRoutes);
 app.use("/api/index", indexRoutes);
 
 // Routes nécéssitant d'etre connectés :
-app.use(authMiddleware);
+//app.use(authMiddleware);
 app.use("/api/user", userRoutes);
 app.use("/api/playlist", playlistRoutes);
 ///////////////////////////////////////////////////////

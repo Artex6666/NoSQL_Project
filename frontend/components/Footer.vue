@@ -10,7 +10,7 @@ export default {};
 
 <style scoped>
 .footer {
-  background-color: #1db954; /* Spotify green */
+  background-color: #1db954;
   color: white;
   text-align: center;
   padding: 10px 0;

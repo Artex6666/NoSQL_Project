@@ -1,13 +1,37 @@
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="en">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Spotify like</title>
+    <link rel="stylesheet" href="styles.css" />
   </head>
   <body>
-    <script type="module" src="/frontend/main.js"></script>
-    <div id="app"></div>
-    <!-- Le fichier bundle.js sera injecté automatiquement par Vite ou Webpack -->
+    <header class="header">
+      <img
+        src="./frontend/assets/images/Spotify_logo.png"
+        alt="Logo"
+        class="logo"
+      />
+      <form id="searchForm" class="search-container">
+        <input
+          type="text"
+          id="searchInput"
+          placeholder="Rechercher une musique..."
+          class="search-bar"
+        />
+        <button type="submit" class="search-button">Recherche</button>
+      </form>
+    </header>
+
+    <main class="main">
+      <div id="results"></div>
+    </main>
+
+    <footer class="footer">
+      <p>&copy; 2025 Spotify like</p>
+    </footer>
+
+    <script src="script.js"></script>
   </body>
 </html>

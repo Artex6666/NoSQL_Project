@@ -22,7 +22,7 @@
 <script>
 import Header from "../components/Header.vue";
 import Footer from "../components/Footer.vue";
-import popularMusicController from "../../backend/controllers/popularMusicController.js"; // Adjust the path
+import popularMusicController from "../../backend/controllers/popularMusicController.js";
 
 export default {
   data() {
